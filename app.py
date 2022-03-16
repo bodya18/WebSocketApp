@@ -1,13 +1,29 @@
-import asyncio
-import websockets
+from flask import Flask, render_template
+from flask_socketio import SocketIO, emit
 
-async def echo(websocket):
-    async for message in websocket:
-        print(message)
-        await websocket.send(message)
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app)
 
-async def main():
-    async with websockets.serve(echo, "localhost", 23765):
-        await asyncio.Future()  # run forever
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-asyncio.run(main())
+@socketio.on('my event')
+def test_message(message):
+    emit('my response', {'data': message['data']})
+
+@socketio.on('my broadcast event')
+def test_message(message):
+    emit('my response', {'data': message['data']}, broadcast=True)
+
+@socketio.on('connect')
+def test_connect():
+    emit('my response', {'data': 'Connected'})
+
+@socketio.on('disconnect')
+def test_disconnect():
+    print('Client disconnected')
+
+if __name__ == '__main__':
+    socketio.run(app, port = 23765)
