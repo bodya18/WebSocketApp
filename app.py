@@ -1,12 +1,28 @@
 import asyncio
 import websockets
 
-async def echo(websocket):
-    async for message in websocket:
-        await websocket.send(message)
+USERS = set()
 
-async def main():
-    async with websockets.serve(echo, host="0.0.0.0", port=23765):
-        await asyncio.Future()  # run forever
+async def addUser(websocket):
+    USERS.add(websocket)
 
-asyncio.run(main())
+async def removeUser(websocket):
+    USERS.remove(websocket)
+    websocket.close()
+
+async def socket(websocket, path):
+    await addUser(websocket)
+
+    try:
+        while True:
+            message = await websocket.recv()
+            
+            await asyncio.wait([user.send(message) for user in USERS])
+    finally:
+        await removeUser(websocket)
+        
+
+start_server = websockets.serve(socket, host="0.0.0.0", port=23765)
+
+asyncio.get_event_loop().run_until_complete(start_server)
+asyncio.get_event_loop().run_forever()
