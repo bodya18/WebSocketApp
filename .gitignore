@@ -1,2 +1,5 @@
 venv/
 pm2_run.config.json
+__pycache__/
+.env
+migrations/

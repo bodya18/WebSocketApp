@@ -1,28 +1,42 @@
-import asyncio
-import websockets
+from flask import Flask, render_template
+from flask_sock import Sock
+
+from flask_sqlalchemy import SQLAlchemy
+from middleware.config import mysql_conf
+from flask_migrate import Migrate
+
+app = Flask(__name__)
+sock = Sock(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = mysql_conf
+
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+import database.models
+
 
 USERS = set()
 
-async def addUser(websocket):
+def addUser(websocket):
     USERS.add(websocket)
 
-async def removeUser(websocket):
+def removeUser(websocket):
     USERS.remove(websocket)
     websocket.close()
 
-async def socket(websocket, path):
-    await addUser(websocket)
+@app.route('/')
+def index():
+    return render_template('index.html')
 
+
+@sock.route('/test')
+def echo(socket):
     try:
+        addUser(socket)
         while True:
-            message = await websocket.recv()
-            
-            await asyncio.wait([user.send(message) for user in USERS])
+            data = socket.receive()
+            [user.send(data) for user in USERS]
     finally:
-        await removeUser(websocket)
-        
+        removeUser(socket)
 
-start_server = websockets.serve(socket, host="0.0.0.0", port=23765)
-
-asyncio.get_event_loop().run_until_complete(start_server)
-asyncio.get_event_loop().run_forever()
+if __name__ == '__main__':
+    app.run(host="0.0.0.0", port="23765")
