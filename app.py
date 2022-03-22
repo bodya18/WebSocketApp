@@ -1,18 +1,15 @@
 from flask import Flask, render_template
 from flask_sock import Sock
 
-from flask_sqlalchemy import SQLAlchemy
 from middleware.config import mysql_conf
-from flask_migrate import Migrate
 
 app = Flask(__name__)
 sock = Sock(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = mysql_conf
 
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-import database.models
+from controllers.register import register_page
 
+app.register_blueprint(register_page, url_prefix='/')
 
 USERS = set()
 
