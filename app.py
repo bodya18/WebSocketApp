@@ -6,10 +6,13 @@ from middleware.config import mysql_conf
 app = Flask(__name__)
 sock = Sock(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = mysql_conf
+app.secret_key = 'sdafjhdsakfdsndnnvcxbi2'
 
-from controllers.register import register_page
+from controllers.chats import chats_page
+from controllers.users import users_page
 
-app.register_blueprint(register_page, url_prefix='/')
+app.register_blueprint(chats_page, url_prefix='/')
+app.register_blueprint(users_page, url_prefix='/user')
 
 USERS = set()
 
@@ -19,11 +22,6 @@ def addUser(websocket):
 def removeUser(websocket):
     USERS.remove(websocket)
     websocket.close()
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
 
 @sock.route('/test')
 def echo(socket):
@@ -36,4 +34,4 @@ def echo(socket):
         removeUser(socket)
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port="23765")
+    app.run(host="0.0.0.0", port="23765", debug=True)
