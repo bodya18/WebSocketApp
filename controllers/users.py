@@ -20,6 +20,19 @@ def save():
 
 @users_page.route('/delete', methods=['POST'])
 def delete():
-    UserService.deleteUser(session['user']['id'])
+    # UserService.deleteUser(session['user']['id'])
     session.pop('user')
     return redirect("/")
+
+
+@users_page.route('/api/all', methods=['GET'])
+def get_all():
+    _user = dict()
+    _users = list()
+    users = UserService.getAll()
+    for user in users:
+        _user["id"] = user.id
+        _user["status"] = user.status
+        _user["name"] = user.name
+        _users.append(_user)
+    return json.dumps(_users)

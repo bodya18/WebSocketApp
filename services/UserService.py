@@ -3,7 +3,6 @@ from database.models import User, db_session
 class UserService:
     
     def addUser(name):
-        # возврат id
         user = User(name)
         db_session.add(user)
         db_session.commit()

@@ -1,4 +1,5 @@
 from services.ChatService import ChatService
+from services.UserService import UserService
 from middleware.config import ROOT_DIR
 from flask import Blueprint, render_template, request, session
 import json
@@ -14,5 +15,6 @@ def index_page():
 
 @chats_page.route('/chat/<id>', methods=['GET'])
 def chat_page(id):
+    users = UserService.getAll()
     chat = ChatService.get_by_id(id)
-    return render_template("single_chat.html", chat = chat)
+    return render_template("single_chat.html", chat = chat, users=users)
