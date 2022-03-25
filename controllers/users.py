@@ -27,12 +27,14 @@ def delete():
 
 @users_page.route('/api/all', methods=['GET'])
 def get_all():
-    _user = dict()
     _users = list()
     users = UserService.getAll()
     for user in users:
-        _user["id"] = user.id
-        _user["status"] = user.status
-        _user["name"] = user.name
+        _user = dict()
+        user = user.__dict__
+        _user["id"] = user['id']
+        _user["status"] = user['status']
+        _user["name"] = user['name']
+        print(_user)
         _users.append(_user)
     return json.dumps(_users)
