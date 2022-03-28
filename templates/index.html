@@ -26,6 +26,12 @@
         <button class="btn btn-success" type="submit">Подтвердить</button>
       </form>
     {% endif %}
+
+    <br><br><h5>Временно</h3>
+    <form action="{{ url_for('chats.add') }}" method="post">
+      <input  class="input" name="title" type="text" placeholder="Добавить чат">
+      <button class="btn btn-success" type="submit">Добавить чат</button>
+    </form>
     <!-- <script>
       const log = (text, color) => {
         document.getElementById('log').innerHTML += `<span style="color: ${color}">${text}</span><br>`;

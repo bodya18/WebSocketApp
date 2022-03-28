@@ -1,7 +1,7 @@
 from services.ChatService import ChatService
 from services.UserService import UserService
 from middleware.config import ROOT_DIR
-from flask import Blueprint, render_template, request, session
+from flask import Blueprint, redirect, render_template, request, session
 import json
 
 
@@ -18,3 +18,10 @@ def chat_page(id):
     users = UserService.getAll()
     chat = ChatService.get_by_id(id)
     return render_template("single_chat.html", chat = chat, users=users)
+
+
+@chats_page.route('/new/chat/', methods=['POST'])
+def add():
+    chat_title = request.form.get('title')
+    ChatService.addChat(chat_title)
+    return redirect('/')
