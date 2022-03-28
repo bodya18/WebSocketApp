@@ -34,4 +34,5 @@ def echo(socket):
         removeUser(socket)
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port="23765", debug=True)
+    # app.run(host="0.0.0.0", port="23765")
+    app.run(debug=True)

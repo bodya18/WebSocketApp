@@ -66,7 +66,7 @@
                             </div>
                         </div> -->
                         <div class="chat-history">
-                            <ul class="m-b-0">
+                            <ul class="m-b-0" id="list_msg">
                                 <li class="clearfix">
                                     <div class="message-data text-right">
                                         <span class="message-data-time">You</span>
@@ -97,6 +97,7 @@
                                     </div>
                                     <div class="message my-message">Are we meeting today?</div>                                    
                                 </li>
+
                             </ul>
                         </div>
                         <div class="chat-message clearfix">
@@ -104,7 +105,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fa fa-send"></i></span>
                                 </div>
-                                <input type="text" class="form-control" placeholder="Enter text here...">                                    
+                                <input type="text" id="send_message" class="form-control" placeholder="Нажмите Enter чтобы отправить...">                                    
                             </div>
                         </div>
                     </div>
@@ -112,5 +113,6 @@
             </div>
         </div>
     </div>
+    <script src="/static/js/send_message.js"></script>
 </body>
 </html>
