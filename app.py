@@ -43,5 +43,5 @@ def disconnect():
 
 
 if __name__ == '__main__':
-    # app.run(host="0.0.0.0", port="23765")
-    socket.run(app, debug=True)
+    socket.run(app, host="0.0.0.0", port="23765")
+    # socket.run(app, debug=True)
