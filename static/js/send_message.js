@@ -1,28 +1,14 @@
-const socket = new WebSocket('ws://' + location.host + '/test');
-
-socket.addEventListener('message', ev => {
-    console.log(ev.data);
-    ul = document.getElementById('list_msg')
-    li = document.createElement('li')
-    li.className = 'clearfix'
-    
-    li.insertAdjacentHTML('beforeend', `
-        <div class="message-data">
-            <span class="message-data-time">NAME</span>
-        </div>
-        <div class="message my-message">${msg_text}</div>
-    `)
-    ul.appendChild(li)
-    console.log(ul);
-});
-
+var socket = io.connect('http://' + document.domain + ':' + location.port);
 
 (function() {
+    div_chat = document.getElementById('div-chat-list')
+    div_chat.scrollTop = div_chat.scrollHeight
     document.getElementById('send_message').addEventListener('keydown', function(ev) {
         if (ev.keyCode === 13) {
             msg_text = this.value
-            console.log(msg_text);
-            socket.send(msg_text);
+
+            socket.emit('message', msg_text)
+
             this.value = ''
             ul = document.getElementById('list_msg')
             li = document.createElement('li')
@@ -35,7 +21,23 @@ socket.addEventListener('message', ev => {
                 <div class="message other-message float-right">${msg_text}</div>
             `)
             ul.appendChild(li)
-            console.log(ul);
+            div_chat.scrollTop = div_chat.scrollHeight
         }
     });
 })();
+
+
+socket.on('message_response', function( msg ) {
+    ul = document.getElementById('list_msg')
+    li = document.createElement('li')
+    li.className = 'clearfix'
+    
+    li.insertAdjacentHTML('beforeend', `
+        <div class="message-data">
+            <span class="message-data-time">NAME</span>
+        </div>
+        <div class="message my-message">${msg}</div>
+    `)
+    ul.appendChild(li)
+    div_chat.scrollTop = div_chat.scrollHeight
+})
