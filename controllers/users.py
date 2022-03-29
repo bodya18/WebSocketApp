@@ -35,6 +35,8 @@ def get_all():
         _user["id"] = user['id']
         _user["status"] = user['status']
         _user["name"] = user['name']
+        # _user["socket"] = user['socket']
         print(_user)
+        
         _users.append(_user)
     return json.dumps(_users)

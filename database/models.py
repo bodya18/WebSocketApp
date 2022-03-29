@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, create_engine
+from sqlalchemy import Column, Integer, String, ForeignKey, create_engine, TEXT
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from middleware.config import mysql_conf
@@ -33,11 +33,12 @@ class User(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255, collation="utf8mb4_unicode_ci"))
     status = Column(String(255, collation="utf8mb4_unicode_ci"))
-    socket_id = Column(String(255, collation="utf8mb4_unicode_ci"))
+    socket = Column(TEXT(collation="utf8mb4_unicode_ci"))
 
-    def __init__(self, name, status = None):
+    def __init__(self, name, socket = None, status = None):
         self.name = name
         self.status = status
+        self.socket = socket
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
