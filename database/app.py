@@ -32,7 +32,6 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
     status = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
-    socket = db.Column(db.Text(collation="utf8mb4_unicode_ci"))
 
     def __init__(self, name, status):
         self.name = name

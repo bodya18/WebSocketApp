@@ -5,35 +5,7 @@
     <title>Flask-Sock Demo</title>
   </head>
   <body>
-    <table>
-      <tr style="margin-top: 10px; width:25px;">
-      {% for chat in chats %}
-        <td>
-          <a class="btn btn-info"  href="{{ url_for('chats.chat_page', id=chat.id) }}">{{chat.title}}</a>
-        </td>
-      {% endfor %}
-      </tr>
-    </table><br>
-    {% if session.user is defined%}
-
-    <form action="{{ url_for('users.delete') }}" method="post">
-      Пользователь {{session.user.name}}
-        <input type="submit" class="btn btn-secondary" value="Сменить">
-      </form>
-    {%else%}
-      <form action="{{ url_for('users.save') }}" method="post">
-        <input  class="input" name="name" type="text" placeholder="Ваше имя">
-        <button class="btn btn-success" type="submit">Подтвердить</button>
-      </form>
-    {% endif %}
-
-    <br><br><h5>Временно</h3>
-    <form action="{{ url_for('chats.add') }}" method="post">
-      <input  class="input" name="title" type="text" placeholder="Добавить чат">
-      <button class="btn btn-success" type="submit">Добавить чат</button>
-    </form>
-    <!-- <script>
-
-    </script> -->
+    hello
+    <script src="/static/js/send_message.js"></script>
   </body>
 </html>

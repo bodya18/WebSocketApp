@@ -7,22 +7,13 @@ import json
 
 users_page = Blueprint('users', __name__, template_folder='templates')
 
-@users_page.route('/save', methods=['POST'])
-def save():
-    user_name = request.form.get('name')
+@users_page.route('/add', methods=['POST'])
+def add_user():
+    user_name = request.json['name']
+    print(user_name)
     user_id = UserService.addUser(user_name)
-    user = dict(
-        name = user_name,
-        id = user_id
-    )
-    session['user'] = user
-    return redirect("/")
-
-@users_page.route('/delete', methods=['POST'])
-def delete():
-    # UserService.deleteUser(session['user']['id'])
-    session.pop('user')
-    return redirect("/")
+    id = dict(user_id=user_id)
+    return id
 
 
 @users_page.route('/api/all', methods=['GET'])

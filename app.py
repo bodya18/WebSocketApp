@@ -12,7 +12,7 @@ from controllers.chats import chats_page
 from controllers.users import users_page
 
 app.register_blueprint(chats_page, url_prefix='/')
-app.register_blueprint(users_page, url_prefix='/user')
+app.register_blueprint(users_page, url_prefix='/users')
 
 USERS = set()
 
