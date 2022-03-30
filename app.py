@@ -21,7 +21,6 @@ def addUser(socket):
 
 def removeUser(socket):
     USERS.remove(socket)
-    socket.close()
 
 @sock.route('/')
 def echo(socket):
