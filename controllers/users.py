@@ -9,7 +9,7 @@ users_page = Blueprint('users', __name__, template_folder='templates')
 
 @users_page.route('/add', methods=['POST'])
 def add_user():
-    user_name = request.json['name']
+    user_name = request.args['name']
     print(user_name)
     user_id = UserService.addUser(user_name)
     id = dict(user_id=user_id)
