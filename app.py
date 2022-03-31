@@ -1,3 +1,4 @@
+from distutils.log import debug
 from flask import Flask, request
 from flask_socketio import SocketIO
 
@@ -43,5 +44,5 @@ def disconnect():
 
 
 if __name__ == '__main__':
-    socket.run(app, host="0.0.0.0", port="23765")
+    socket.run(app, host="0.0.0.0", port="23765", debug=True)
     # socket.run(app, debug=True)
