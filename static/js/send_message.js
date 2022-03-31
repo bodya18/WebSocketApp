@@ -1,4 +1,5 @@
 var socket = io.connect('http://' + document.domain + ':' + location.port);
+// var socket = io.connect('http://31.28.9.200:23765/');
 
 socket.on('message_response', function( msg ) {
     console.log(msg);

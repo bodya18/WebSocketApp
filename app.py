@@ -5,7 +5,7 @@ from flask_socketio import SocketIO
 from middleware.config import mysql_conf
 
 app = Flask(__name__)
-socket = SocketIO(app)
+socket = SocketIO(app, cors_allowed_origins="*")
 
 app.config['SQLALCHEMY_DATABASE_URI'] = mysql_conf
 app.secret_key = 'sdafjhdsakfdsndnnvcxbi2'
@@ -44,5 +44,5 @@ def disconnect():
 
 
 if __name__ == '__main__':
-    socket.run(app, host="0.0.0.0", port="23765", debug=True)
-    # socket.run(app, debug=True)
+    # socket.run(app, host="0.0.0.0", port="23765", debug=True)
+    socket.run(app, debug=True)
