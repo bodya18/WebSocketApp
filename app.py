@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request
-from flask_sock import Sock
+from flask import Flask, request
+from flask_socketio import SocketIO
 
 from middleware.config import mysql_conf
 
 app = Flask(__name__)
-sock = Sock(app)
+socket = SocketIO(app)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = mysql_conf
 app.secret_key = 'sdafjhdsakfdsndnnvcxbi2'
 
@@ -14,24 +15,33 @@ from controllers.users import users_page
 app.register_blueprint(chats_page, url_prefix='/')
 app.register_blueprint(users_page, url_prefix='/users')
 
-USERS = set()
 
-def addUser(socket):
-    USERS.add(socket)
+USERS = []
 
-def removeUser(socket):
-    USERS.remove(socket)
+def addUser(websocket):
+    USERS.append(websocket)
 
-@sock.route('/')
-def echo(socket):
-    try:
-        addUser(socket)
-        while True:
-            data = socket.receive()
-            [user.send(data) for user in USERS]
-    finally:
-        removeUser(socket)
+def removeUser(websocket):
+    USERS.remove(websocket)
+
+
+@socket.on('message')
+def message(msg_text):
+    for user in USERS:
+        if request.sid is not user:
+            socket.emit('message_response', msg_text, room=user)
+
+@socket.on('connect')
+def connect():
+    currentSocketId = request.sid
+    addUser(currentSocketId)
+
+@socket.on('disconnect')
+def disconnect():
+    currentSocketId = request.sid
+    removeUser(currentSocketId)
+
 
 if __name__ == '__main__':
-    # app.run(host="0.0.0.0", port="23765")
-    app.run(debug=True)
+    socket.run(app, host="0.0.0.0", port="23765")
+    # socket.run(app, debug=True)

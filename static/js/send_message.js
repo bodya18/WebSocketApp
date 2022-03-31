@@ -1,12 +1,12 @@
-const socket = new WebSocket('ws://' + location.host);
+var socket = io.connect('http://' + document.domain + ':' + location.port);
 
-socket.addEventListener('message', ev => {
-    console.log(ev.data);
-});
+socket.on('message_response', function( msg ) {
+    console.log(msg);
+})
 
 function data_center(ev) {
     ev.preventDefault()
-    msg = document.getElementById('send_message').value
-    console.log(msg);
-    socket.send(msg);
+    msg_text = document.getElementById('send_message').value
+    console.log(msg_text);
+    socket.emit('message', msg_text)
 }
