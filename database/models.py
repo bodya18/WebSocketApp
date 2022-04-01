@@ -36,11 +36,12 @@ class User(Base):
     email = Column(String(255, collation="utf8mb4_unicode_ci"))
     role = Column(String(255, collation="utf8mb4_unicode_ci"))
 
-    def __init__(self, name, password = None, role = None, status = None):
+    def __init__(self, name, password = None, role = None, status = None, email=None):
         self.name = name
         self.password = password
         self.role = role
         self.status = status
+        self.email = email
 
     def __repr__(self):
         return '<id {}>'.format(self.id)

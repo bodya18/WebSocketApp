@@ -4,8 +4,8 @@ from sqlalchemy import select
 
 class UserService:
 
-    def addUser(name):
-        user = User(name)
+    def addUser(name, email, role):
+        user = User(name=name, email=email, role=role)
         session.add(user)
         session.commit()
         return user.id
