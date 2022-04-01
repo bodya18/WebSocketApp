@@ -1,14 +1,12 @@
+from click import echo
 from sqlalchemy import Column, Integer, String, ForeignKey, create_engine, TEXT
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import Session
 from sqlalchemy.ext.declarative import declarative_base
 from middleware.config import mysql_conf
 
-engine = create_engine(mysql_conf, convert_unicode=True)
-db_session = scoped_session(sessionmaker(autocommit=False,
-                                         autoflush=False,
-                                         bind=engine))
+engine = create_engine(mysql_conf, convert_unicode=True, echo=False)
+session = Session(engine)
 Base = declarative_base()
-Base.query = db_session.query_property()
 
 
 class Chat(Base):
@@ -24,6 +22,7 @@ class Chat(Base):
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
+        
 
 
 
@@ -33,13 +32,27 @@ class User(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255, collation="utf8mb4_unicode_ci"))
     status = Column(String(255, collation="utf8mb4_unicode_ci"))
+    password = Column(String(255, collation="utf8mb4_unicode_ci"))
+    email = Column(String(255, collation="utf8mb4_unicode_ci"))
+    role = Column(String(255, collation="utf8mb4_unicode_ci"))
 
-    def __init__(self, name, status = None):
+    def __init__(self, name, password = None, role = None, status = None):
         self.name = name
+        self.password = password
+        self.role = role
         self.status = status
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
+        
+    def serialize(self):
+        return dict(
+            id = self.id,
+            name = self.name,
+            status = self.status,
+            email = self.email,
+            role = self.role,
+        )
 
 
 

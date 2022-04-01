@@ -1,8 +1,9 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from middleware.config import mysql_conf
 from flask_migrate import Migrate
 
+
+from middleware.config import mysql_conf
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = mysql_conf
 
@@ -17,14 +18,6 @@ class Chat(db.Model):
     title = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
     status = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
 
-    def __init__(self, title, status):
-        self.title = title
-        self.status = status
-
-    def __repr__(self):
-        return '<id {}>'.format(self.id)
-
-
 
 class User(db.Model):
     __tablename__ = 'Users'
@@ -32,14 +25,9 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
     status = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
-
-    def __init__(self, name, status):
-        self.name = name
-        self.status = status
-
-    def __repr__(self):
-        return '<id {}>'.format(self.id)
-
+    password = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
+    email = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
+    role = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
 
 
 class Message(db.Model):
@@ -52,16 +40,6 @@ class Message(db.Model):
     chat_id = db.Column(db.Integer(), db.ForeignKey("Chats.id"), nullable=False)
     user_id = db.Column(db.Integer(), db.ForeignKey("Users.id"), nullable=False)
 
-    def __init__(self, message, status, file, chat_id, user_id):
-        self.message = message
-        self.status = status
-        self.file = file
-        self.user_id = user_id
-        self.chat_id = chat_id
-
-    def __repr__(self):
-        return '<id {}>'.format(self.id)
-
 
 class Chat_User(db.Model):
     __tablename__ = 'Chat_User'
@@ -70,12 +48,6 @@ class Chat_User(db.Model):
     chat_id = db.Column(db.Integer(), db.ForeignKey("Chats.id"), nullable=False)
     user_id = db.Column(db.Integer(), db.ForeignKey("Users.id"), nullable=False)
 
-    def __init__(self, chat_id, user_id):
-        self.user_id = user_id
-        self.chat_id = chat_id
-
-    def __repr__(self):
-        return '<id {}>'.format(self.id)
 
 if __name__ == '__main__':
     app.run()

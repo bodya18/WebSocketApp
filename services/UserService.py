@@ -1,16 +1,28 @@
-from database.models import User, db_session
+from database.models import User, session
+from sqlalchemy import select
+
 
 class UserService:
 
     def addUser(name):
         user = User(name)
-        db_session.add(user)
-        db_session.commit()
+        session.add(user)
+        session.commit()
         return user.id
 
     def getAll():
-        return User.query.all()
+        users = select(User)
+        result = session.execute(users).scalars().all()
+        return result
 
     
-    def deleteUser(id):
-        User.query.filter_by(id=id).delete()
+    def get_admin(name, role):
+        stmt = select(User).where(User.name == name, User.role == role)
+        result = session.execute(stmt).scalars().one_or_none()
+        return result
+
+    
+    def add_admin(name, password, role):
+        user = User(name, password, role)
+        session.add(user)
+        session.commit()

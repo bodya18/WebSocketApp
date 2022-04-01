@@ -1,14 +1,19 @@
-from database.models import Chat, db_session
+from database.models import Chat, session
+from sqlalchemy import select
 
 class ChatService:
     
     def addChat(title):
         chat = Chat(title)
-        db_session.add(chat)
-        db_session.commit()
+        session.add(chat)
+        session.commit()
 
     def getAll():
-        return Chat.query.all()
+        chat = select(Chat)
+        result = session.execute(chat).scalars().all()
+        return result
 
     def get_by_id(id):
-        return Chat.query.filter_by(id=id).first()
+        stmt = select(Chat).where(Chat.id == id)
+        result = session.execute(stmt).scalars().one_or_none()
+        return result

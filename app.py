@@ -12,9 +12,11 @@ app.secret_key = 'sdafjhdsakfdsndnnvcxbi2'
 
 from controllers.chats import chats_page
 from controllers.users import users_page
+from controllers.admin import admin_bp
 
 app.register_blueprint(chats_page, url_prefix='/')
 app.register_blueprint(users_page, url_prefix='/users')
+app.register_blueprint(admin_bp, url_prefix='/admin')
 
 
 USERS = []
