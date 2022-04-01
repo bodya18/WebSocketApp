@@ -11,10 +11,13 @@ admin_bp = Blueprint('admin', __name__, template_folder='templates')
 def login():
     user_name = request.args['name']
     user_pass = request.args['password']
-    admin_pass = UserService.get_admin(user_name, role="Admin").password
-    
+    admin = UserService.get_admin(user_name, role="Admin")
+    admin_pass = admin.password
     if admin_pass == bcrypt.hashpw(user_pass.encode('UTF_8'), admin_pass.encode('UTF_8')).decode():
-        return dict(auth=True)
+        return dict(
+            auth=True,
+            user=admin.serialize()
+        )
     else:
         return dict(auth=False)
 
