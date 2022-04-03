@@ -1,7 +1,5 @@
-from services.ChatService import ChatService
 from services.UserService import UserService
-from middleware.config import ROOT_DIR
-from flask import Blueprint, render_template, request, session, redirect
+from flask import Blueprint, request
 import json
 
 
