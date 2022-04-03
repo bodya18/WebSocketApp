@@ -1,5 +1,4 @@
-from click import echo
-from sqlalchemy import Column, Integer, String, ForeignKey, create_engine, TEXT
+from sqlalchemy import Column, Integer, String, ForeignKey, create_engine, TEXT, select
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.declarative import declarative_base
 from middleware.config import mysql_conf
@@ -7,23 +6,6 @@ from middleware.config import mysql_conf
 engine = create_engine(mysql_conf, convert_unicode=True, echo=False)
 session = Session(engine)
 Base = declarative_base()
-
-
-class Chat(Base):
-    __tablename__ = 'Chats'
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    title = Column(String(255, collation="utf8mb4_unicode_ci"))
-    status = Column(String(255, collation="utf8mb4_unicode_ci"))
-
-    def __init__(self, title, status = None):
-        self.title = title
-        self.status = status
-
-    def __repr__(self):
-        return '<id {}>'.format(self.id)
-        
-
 
 
 class User(Base):
@@ -54,6 +36,11 @@ class User(Base):
             email = self.email,
             role = self.role,
         )
+    
+    def get_by_id(id):
+        stmt = select(User).where(User.id == id)
+        result = session.execute(stmt).scalars().one_or_none()
+        return result.serialize()
 
 
 
@@ -64,32 +51,22 @@ class Message(Base):
     message = Column(String(255, collation="utf8mb4_unicode_ci"))
     status = Column(String(255, collation="utf8mb4_unicode_ci"))
     file = Column(String(255, collation="utf8mb4_unicode_ci"))
-    chat_id = Column(Integer(), ForeignKey("Chats.id"), nullable=False)
     user_id = Column(Integer(), ForeignKey("Users.id"), nullable=False)
 
-    def __init__(self, message, status = None, file = None, chat_id = None, user_id = None):
+    def __init__(self, message, status = None, file = None, user_id = None):
         self.message = message
         self.status = status
         self.file = file
         self.user_id = user_id
-        self.chat_id = chat_id
 
-    def __repr__(self):
-        return '<id {}>'.format(self.id)
+    def serialize(self):
+        return dict(
+            id = self.id,
+            message = self.message,
+            status = self.status,
+            file = self.file,
+            user = User.get_by_id(self.user_id),
+        )
 
-
-class Chat_User(Base):
-    __tablename__ = 'Chat_User'
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    chat_id = Column(Integer(), ForeignKey("Chats.id"), nullable=False)
-    user_id = Column(Integer(), ForeignKey("Users.id"), nullable=False)
-
-    def __init__(self, chat_id, user_id):
-        self.user_id = user_id
-        self.chat_id = chat_id
-
-    def __repr__(self):
-        return '<id {}>'.format(self.id)
 
 Base.metadata.create_all(bind=engine)
