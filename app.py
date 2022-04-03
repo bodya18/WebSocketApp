@@ -9,10 +9,10 @@ socket = SocketIO(app, cors_allowed_origins="*")
 app.config['SQLALCHEMY_DATABASE_URI'] = mysql_conf
 app.secret_key = 'sdafjhdsakfdsndnnvcxbi2'
 
-from controllers.users import users_page
+from controllers.users import api_bp
 from controllers.admin import admin_bp
 
-app.register_blueprint(users_page, url_prefix='/users')
+app.register_blueprint(api_bp, url_prefix='/api')
 app.register_blueprint(admin_bp, url_prefix='/admin')
 
 @app.route('/', methods=['GET'])
@@ -20,13 +20,6 @@ def index_page():
     return render_template("index.html")
 
 USERS = []
-
-def addUser(websocket):
-    USERS.append(websocket)
-
-def removeUser(websocket):
-    USERS.remove(websocket)
-
 
 @socket.on('message')
 def message(msg_text):
@@ -37,12 +30,12 @@ def message(msg_text):
 @socket.on('connect')
 def connect():
     currentSocketId = request.sid
-    addUser(currentSocketId)
+    USERS.append(currentSocketId)
 
 @socket.on('disconnect')
 def disconnect():
     currentSocketId = request.sid
-    removeUser(currentSocketId)
+    USERS.remove(currentSocketId)
 
 
 if __name__ == '__main__':

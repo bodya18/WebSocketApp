@@ -3,9 +3,9 @@ from flask import Blueprint, request
 import json
 
 
-users_page = Blueprint('users', __name__, template_folder='templates')
+api_bp = Blueprint('api', __name__, template_folder='templates')
 
-@users_page.route('/add', methods=['POST'])
+@api_bp.route('/users/add', methods=['POST'])
 def add_user():
     user_name = request.args['name']
     user_email = request.args['email']
@@ -14,7 +14,7 @@ def add_user():
     return id
 
 
-@users_page.route('/api/all', methods=['GET'])
+@api_bp.route('/users/all', methods=['GET'])
 def get_all():
     users = UserService.getAll()
     return json.dumps([user.serialize() for user in users])
