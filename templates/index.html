@@ -5,9 +5,13 @@
     <title>Flask-Sock Demo</title>
   </head>
   <body>
-    hello
+    user
     <input id="send_message" type="text">
     <button onclick="data_center(event)">send</button>
+    <br>
+    admin
+    <input id="admin_send_message" type="text">
+    <button onclick="admin_send_message(event)">send</button>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
     <script src="/static/send_message.js"></script>

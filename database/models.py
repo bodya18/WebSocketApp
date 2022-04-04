@@ -17,6 +17,7 @@ class User(Base):
     password = Column(String(255, collation="utf8mb4_unicode_ci"))
     email = Column(String(255, collation="utf8mb4_unicode_ci"))
     role = Column(String(255, collation="utf8mb4_unicode_ci"))
+    socket = Column(String(255, collation="utf8mb4_unicode_ci"))
 
     def __init__(self, name, password = None, role = None, status = None, email=None):
         self.name = name
@@ -35,6 +36,7 @@ class User(Base):
             status = self.status,
             email = self.email,
             role = self.role,
+            socket = self.socket,
         )
     
     def get_by_id(id):

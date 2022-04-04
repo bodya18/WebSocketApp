@@ -1,3 +1,4 @@
+import json
 from flask import Flask, request, render_template
 from flask_socketio import SocketIO
 
@@ -19,23 +20,41 @@ app.register_blueprint(admin_bp, url_prefix='/admin')
 def index_page():
     return render_template("index.html")
 
-USERS = []
 
-@socket.on('message')
-def message(msg_text):
-    for user in USERS:
-        if request.sid is not user:
-            socket.emit('message_response', msg_text, room=user)
+from services.UserService import UserService
 
-@socket.on('connect')
-def connect():
+@socket.on('user_message')
+def user_message(msg_text):
+    messages = UserService.get_messages_by_userId(user_id=msg_text["user_id"])
+    UserService.new_message(message=msg_text["message"], user_id=msg_text["user_id"])
+    UserService.update_status('Actived', msg_text["user_id"])
+    
+    new_chat = False
+    if messages == []:
+        new_chat = True
+    msg_text["new_chat"] = new_chat
+    
+    socket.emit('admin_response', msg_text)
+
+
+@socket.on('admin_send_message')
+def admin_send_message(msg_text):
+    user = UserService.get_by_id(msg_text["user_id"])
+    if user["socket"] is not None:
+        socket.emit('user_response', msg_text)
+    else:
+        print("User is offline")
+    UserService.new_message(message=msg_text["message"], user_id=msg_text["user_id"], status = "Admin")
+
+@socket.on('connected')
+def connected(user):
     currentSocketId = request.sid
-    USERS.append(currentSocketId)
+    UserService.update_socket(socket=currentSocketId, id=user["id"])
 
 @socket.on('disconnect')
 def disconnect():
     currentSocketId = request.sid
-    USERS.remove(currentSocketId)
+    UserService.delete_socket(socket=currentSocketId)
 
 
 if __name__ == '__main__':

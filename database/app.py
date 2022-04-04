@@ -20,6 +20,7 @@ class User(db.Model):
     password = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
     email = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
     role = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
+    socket = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
 
 
 class Message(db.Model):
