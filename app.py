@@ -28,7 +28,7 @@ def user_message(msg_text):
     messages = UserService.get_messages_by_userId(user_id=msg_text["user_id"])
     UserService.new_message(message=msg_text["message"], user_id=msg_text["user_id"])
     UserService.update_status('Actived', msg_text["user_id"])
-    
+
     new_chat = False
     if messages == []:
         new_chat = True
@@ -45,6 +45,7 @@ def admin_send_message(msg_text):
     else:
         print("User is offline")
     UserService.new_message(message=msg_text["message"], user_id=msg_text["user_id"], status = "Admin")
+
 
 @socket.on('connected')
 def connected(user):

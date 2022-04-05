@@ -37,6 +37,7 @@ class User(Base):
             email = self.email,
             role = self.role,
             socket = self.socket,
+            last_message = Message.get_last_message(self.id),
         )
     
     def get_by_id(id):
@@ -67,8 +68,14 @@ class Message(Base):
             message = self.message,
             status = self.status,
             file = self.file,
-            user = User.get_by_id(self.user_id),
+            user_id = self.user_id,
         )
 
+    def get_last_message(user_id):
+        stmt = select(Message).where(Message.user_id == user_id).order_by(Message.id.desc()).limit(1)
+        result = session.execute(stmt).scalars().one_or_none()
+        if result is None:
+            return result
+        return result.serialize()
 
 Base.metadata.create_all(bind=engine)

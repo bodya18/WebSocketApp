@@ -19,7 +19,8 @@ class UserService:
         users = select(User).where(User.status == status)
         result = session.execute(users).scalars().all()
         return result
-    
+
+
     def get_admin(name, role):
         stmt = select(User).where(User.name == name, User.role == role)
         result = session.execute(stmt).scalars().one_or_none()

@@ -26,6 +26,13 @@ def get_by_status():
     return json.dumps([user.serialize() for user in users])
 
 
+@api_bp.route('/users/messages', methods=['GET'])
+def get_all_msg():
+    user_id = request.args['user_id']
+    messages = UserService.get_messages_by_userId(user_id)
+    return json.dumps([msg.serialize() for msg in messages])
+
+
 @api_bp.route('/users/new/status', methods=['POST'])
 def update_status():
     status = request.args['status']
