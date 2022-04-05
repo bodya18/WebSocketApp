@@ -1,3 +1,4 @@
+import datetime
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -31,7 +32,7 @@ class Message(db.Model):
     status = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
     file = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
     user_id = db.Column(db.Integer(), db.ForeignKey("Users.id"), nullable=False)
-
+    date = db.Column(db.DateTime(), default=datetime.datetime.now())
 
 if __name__ == '__main__':
     app.run()

@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, create_engine, TEXT, select
+from sqlalchemy import Column, Integer, String, ForeignKey, create_engine, select, DateTime
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.declarative import declarative_base
 from middleware.config import mysql_conf
+import datetime
 
 engine = create_engine(mysql_conf, convert_unicode=True, echo=False)
 session = Session(engine)
@@ -55,6 +56,7 @@ class Message(Base):
     status = Column(String(255, collation="utf8mb4_unicode_ci"))
     file = Column(String(255, collation="utf8mb4_unicode_ci"))
     user_id = Column(Integer(), ForeignKey("Users.id"), nullable=False)
+    date = Column(DateTime(), default=datetime.datetime.now())
 
     def __init__(self, message, status = None, file = None, user_id = None):
         self.message = message
@@ -69,6 +71,7 @@ class Message(Base):
             status = self.status,
             file = self.file,
             user_id = self.user_id,
+            date = str(self.date)
         )
 
     def get_last_message(user_id):
