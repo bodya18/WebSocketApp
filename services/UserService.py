@@ -45,9 +45,10 @@ class UserService:
     def update_socket(socket, id):
         stmt = select(User).where(User.id == id)
         user = session.execute(stmt).scalars().one_or_none()
-        user.socket = socket
-        session.add(user)
-        session.commit()
+        if user:
+            user.socket = socket
+            session.add(user)
+            session.commit()
 
     def update_status(status, id):
         stmt = select(User).where(User.id == id)
@@ -61,9 +62,10 @@ class UserService:
     def delete_socket(socket):
         stmt = select(User).where(User.socket == socket)
         user = session.execute(stmt).scalars().one_or_none()
-        user.socket = None
-        session.add(user)
-        session.commit()
+        if user:
+            user.socket = None
+            session.add(user)
+            session.commit()
 
     def get_by_id(id):
         return User.get_by_id(id)

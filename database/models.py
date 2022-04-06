@@ -45,6 +45,14 @@ class User(Base):
         stmt = select(User).where(User.id == id)
         result = session.execute(stmt).scalars().one_or_none()
         return result.serialize()
+    
+    def drop_all_sockets():
+        sclrs = select(User)
+        users = session.execute(sclrs).scalars().all()
+        for user in users:
+            user.socket = None
+            session.add(user)
+            session.commit()
 
 
 
@@ -81,4 +89,7 @@ class Message(Base):
             return result
         return result.serialize()
 
+
 Base.metadata.create_all(bind=engine)
+
+User.drop_all_sockets()

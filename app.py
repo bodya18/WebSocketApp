@@ -1,10 +1,12 @@
 import json
 from flask import Flask, request, render_template
 from flask_socketio import SocketIO
+from flask_cors import CORS
 
 from middleware.config import mysql_conf
 
 app = Flask(__name__)
+CORS(app)
 socket = SocketIO(app, cors_allowed_origins="*")
 
 app.config['SQLALCHEMY_DATABASE_URI'] = mysql_conf
@@ -25,6 +27,7 @@ from services.UserService import UserService
 
 @socket.on('user_message')
 def user_message(msg_text):
+    print(msg_text)
     try:
         messages = UserService.get_messages_by_userId(user_id=msg_text["user_id"])
         UserService.new_message(message=msg_text["message"], user_id=msg_text["user_id"])

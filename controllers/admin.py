@@ -8,6 +8,7 @@ admin_bp = Blueprint('admin', __name__, template_folder='templates')
 @admin_bp.route('/login', methods=['PUT'])
 def login():
     try:
+        print(request.args['name'], request.args['password'])
         user_name = request.args['name']
         user_pass = request.args['password']
         admin = UserService.get_admin(user_name, role="Admin")
@@ -20,6 +21,7 @@ def login():
         else:
             return dict(auth=False, error="invalid name or password")
     except:
+        print(123)
         return dict(error="need in params name and password")
 
 
