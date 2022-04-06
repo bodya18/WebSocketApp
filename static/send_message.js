@@ -1,10 +1,12 @@
 var socket = io.connect('http://' + document.domain + ':' + location.port);
 // var socket = io.connect('http://31.28.9.200:23765/');
 socket.emit('connected', {
-    "email": "jo@m.ru",
-    "id": 2,
-    "name": "Jo",
+    "email": "vi@mail.ry",
+    "id": 3,
+    "last_message": null,
+    "name": "Kew",
     "role": "User",
+    "socket": null,
     "status": null
 })
 
@@ -16,7 +18,7 @@ function data_center(ev) {
     ev.preventDefault()
     msg_text = document.getElementById('send_message').value
     message = {
-        user_id: 2,
+        user_id: 3,
         message: msg_text
     }
     // console.log(message);

@@ -25,26 +25,32 @@ from services.UserService import UserService
 
 @socket.on('user_message')
 def user_message(msg_text):
-    messages = UserService.get_messages_by_userId(user_id=msg_text["user_id"])
-    UserService.new_message(message=msg_text["message"], user_id=msg_text["user_id"])
-    UserService.update_status('Actived', msg_text["user_id"])
+    try:
+        messages = UserService.get_messages_by_userId(user_id=msg_text["user_id"])
+        UserService.new_message(message=msg_text["message"], user_id=msg_text["user_id"])
+        UserService.update_status('Actived', msg_text["user_id"])
 
-    new_chat = False
-    if messages == []:
-        new_chat = True
-    msg_text["new_chat"] = new_chat
-    
-    socket.emit('admin_response', msg_text)
+        msg_text["new_chat"] = True if messages == [] else False
+        socket.emit('admin_response', msg_text)
+    except:
+        socket.emit('admin_response', dict(error="invalid json format, need user_id and message"))
 
 
 @socket.on('admin_send_message')
 def admin_send_message(msg_text):
-    user = UserService.get_by_id(msg_text["user_id"])
-    if user["socket"] is not None:
-        socket.emit('user_response', msg_text)
-    else:
-        print("User is offline")
-    UserService.new_message(message=msg_text["message"], user_id=msg_text["user_id"], status = "Admin")
+    try:
+        user = UserService.get_by_id(msg_text["user_id"])
+        if user["socket"] is not None:
+            try:
+                socket.emit('user_response', msg_text, room=user["socket"])
+            except:
+                UserService.delete_socket(socket=user["socket"])
+                print("User is offline")
+        else:
+            print("User is offline")
+        UserService.new_message(message=msg_text["message"], user_id=msg_text["user_id"], status = "Admin")
+    except:
+        socket.emit('user_response', dict(error="invalid json format, need user_id and message"))
 
 
 @socket.on('connected')
