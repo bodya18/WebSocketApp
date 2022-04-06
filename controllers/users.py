@@ -19,10 +19,11 @@ def add_user():
             user = UserService.addUser(user_name, user_email, role="User")
             return user
         elif user.name == user_name:
-            return user
+            return user.serialize()
         else: 
             return dict(error="invalid name")
-    except:
+    except Exception as e:
+        print(e)
         return dict(error="need in params name and email")
 
 # пагинацию

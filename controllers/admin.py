@@ -1,6 +1,5 @@
 from services.UserService import UserService
 from flask import Blueprint, request
-import json
 import bcrypt
 
 admin_bp = Blueprint('admin', __name__, template_folder='templates')

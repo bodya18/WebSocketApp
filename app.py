@@ -3,6 +3,7 @@ from flask import Flask, request, render_template
 from flask_socketio import SocketIO
 from flask_cors import CORS
 
+from services.UserService import UserService
 from middleware.config import mysql_conf
 
 app = Flask(__name__)
@@ -18,12 +19,9 @@ from controllers.admin import admin_bp
 app.register_blueprint(api_bp, url_prefix='/api')
 app.register_blueprint(admin_bp, url_prefix='/admin')
 
-@app.route('/', methods=['GET'])
+@app.get('/')
 def index_page():
     return render_template("index.html")
-
-
-from services.UserService import UserService
 
 @socket.on('user_message')
 def user_message(msg_text):
@@ -43,11 +41,7 @@ def admin_send_message(msg_text):
     try:
         user = UserService.get_by_id(msg_text["user_id"])
         if user["socket"] is not None:
-            try:
-                socket.emit('user_response', msg_text, room=user["socket"])
-            except:
-                UserService.delete_socket(socket=user["socket"])
-                print("User is offline")
+            socket.emit('user_response', msg_text, room=user["socket"])
         else:
             print("User is offline")
         UserService.new_message(message=msg_text["message"], user_id=msg_text["user_id"], status = "Admin")
