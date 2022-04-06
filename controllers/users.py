@@ -1,3 +1,4 @@
+from Auth import auth_required
 from middleware.config import STATUS_LIST
 from services.UserService import UserService
 from flask import Blueprint, request
@@ -13,24 +14,40 @@ def add_user():
             return {"error": "length name need min 2 and max 15"}
         user_name = request.args['name']
         user_email = request.args['email']
-        user = UserService.addUser(user_name, user_email, role="User")
-        return user
+        user = UserService.get_by_email(user_email)
+        if user is None:
+            user = UserService.addUser(user_name, user_email, role="User")
+            return user
+        elif user.name == user_name:
+            return user
+        else: 
+            return dict(error="invalid name")
     except:
         return dict(error="need in params name and email")
 
-
+# пагинацию
 @api_bp.route('/users/all', methods=['GET'])
+@auth_required("BEARER")
 def get_all():
     users = UserService.getAll()
+    page = int(request.args['page']) if 'page' in request.args else 1
+    limit = int(request.args['limit']) if 'limit' in request.args else 10
+
+    users = users[page*limit-limit:page*limit]
     return json.dumps([user.serialize() for user in users])
 
 
 @api_bp.route('/users/all/status', methods=['GET'])
+@auth_required("BEARER")
 def get_by_status():
     try:
         status = request.args['status']
         if status in STATUS_LIST:
             users = UserService.getStatus(status)
+            page = int(request.args['page']) if 'page' in request.args else 1
+            limit = int(request.args['limit']) if 'limit' in request.args else 10
+            users = users[page*limit-limit:page*limit]
+            
             return json.dumps([user.serialize() for user in users])
         else:
             return dict(error="Status not valid")
@@ -39,6 +56,7 @@ def get_by_status():
 
 
 @api_bp.route('/users/messages', methods=['GET'])
+@auth_required("BEARER")
 def get_all_msg():
     try:
         user_id = request.args['user_id']
@@ -49,6 +67,7 @@ def get_all_msg():
 
 
 @api_bp.route('/users/new/status', methods=['POST'])
+@auth_required("BEARER")
 def update_status():
     try:
         status = request.args['status']

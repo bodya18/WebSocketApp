@@ -69,3 +69,8 @@ class UserService:
 
     def get_by_id(id):
         return User.get_by_id(id)
+
+    def get_by_email(email):
+        stmt = select(User).where(User.email == email)
+        user = session.execute(stmt).scalars().one_or_none()
+        return user

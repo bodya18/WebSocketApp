@@ -27,7 +27,6 @@ from services.UserService import UserService
 
 @socket.on('user_message')
 def user_message(msg_text):
-    print(msg_text)
     try:
         messages = UserService.get_messages_by_userId(user_id=msg_text["user_id"])
         UserService.new_message(message=msg_text["message"], user_id=msg_text["user_id"])
