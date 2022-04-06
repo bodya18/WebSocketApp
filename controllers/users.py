@@ -31,7 +31,7 @@ def add_user():
 def get_all():
     users = UserService.getAll()
     page = int(request.args['page']) if 'page' in request.args else 1
-    limit = int(request.args['limit']) if 'limit' in request.args else 10
+    limit = int(request.args['limit']) if 'limit' in request.args else 100
 
     users = users[page*limit-limit:page*limit]
     return json.dumps([user.serialize() for user in users])
@@ -45,9 +45,9 @@ def get_by_status():
         if status in STATUS_LIST:
             users = UserService.getStatus(status)
             page = int(request.args['page']) if 'page' in request.args else 1
-            limit = int(request.args['limit']) if 'limit' in request.args else 10
+            limit = int(request.args['limit']) if 'limit' in request.args else 100
             users = users[page*limit-limit:page*limit]
-            
+
             return json.dumps([user.serialize() for user in users])
         else:
             return dict(error="Status not valid")
