@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, create_engine, select, DateTime, TEXT
+from sqlalchemy import Column, Integer, String, ForeignKey, create_engine, select, DateTime, Text
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.declarative import declarative_base
 from middleware.config import mysql_conf
@@ -60,7 +60,7 @@ class Message(Base):
     __tablename__ = 'Messages'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    message = Column(TEXT(collation="utf8mb4_unicode_ci"))
+    message = Column(Text(collation="utf8mb4_unicode_ci"))
     status = Column(String(255, collation="utf8mb4_unicode_ci"))
     file = Column(String(255, collation="utf8mb4_unicode_ci"))
     user_id = Column(Integer(), ForeignKey("Users.id"), nullable=False)
