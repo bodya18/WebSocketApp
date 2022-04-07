@@ -28,14 +28,14 @@ def user_message(msg_text):
     try:
         data = UserService.update_status('Actived', msg_text["user_id"])
         if data["error"]:
-            return socket.emit('admin_response', data)
+            return socket.emit('user_response', data)
         messages = UserService.get_messages_by_userId(user_id=msg_text["user_id"])
         UserService.new_message(message=msg_text["message"], user_id=msg_text["user_id"])
 
         msg_text["new_chat"] = True if messages == [] else False
         socket.emit('admin_response', msg_text)
     except:
-        socket.emit('admin_response', dict(error="invalid json format, need user_id and message"))
+        socket.emit('user_response', dict(error="invalid json format, need user_id and message"))
 
 
 @socket.on('admin_send_message')
@@ -48,7 +48,7 @@ def admin_send_message(msg_text):
             print("User is offline")
         UserService.new_message(message=msg_text["message"], user_id=msg_text["user_id"], status = "Admin")
     except:
-        socket.emit('user_response', dict(error="invalid json format, need user_id and message"))
+        socket.emit('admin_response', dict(error="invalid json format, need user_id and message"))
 
 
 @socket.on('connected')
