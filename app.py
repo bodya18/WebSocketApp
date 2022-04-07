@@ -26,9 +26,7 @@ def index_page():
 @socket.on('user_message')
 def user_message(msg_text):
     try:
-        data = UserService.update_status('Actived', msg_text["user_id"])
-        if data["error"]:
-            return socket.emit('user_response', data)
+        UserService.update_status('Actived', msg_text["user_id"])
         messages = UserService.get_messages_by_userId(user_id=msg_text["user_id"])
         UserService.new_message(message=msg_text["message"], user_id=msg_text["user_id"])
 
