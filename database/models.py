@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, create_engine, select, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, create_engine, select, DateTime, TEXT
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.declarative import declarative_base
 from middleware.config import mysql_conf
@@ -60,17 +60,18 @@ class Message(Base):
     __tablename__ = 'Messages'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    message = Column(String(255, collation="utf8mb4_unicode_ci"))
+    message = Column(TEXT(collation="utf8mb4_unicode_ci"))
     status = Column(String(255, collation="utf8mb4_unicode_ci"))
     file = Column(String(255, collation="utf8mb4_unicode_ci"))
     user_id = Column(Integer(), ForeignKey("Users.id"), nullable=False)
     date = Column(DateTime(), default=datetime.datetime.now())
 
-    def __init__(self, message, status = None, file = None, user_id = None):
+    def __init__(self, message, date = None, status = None, file = None, user_id = None):
         self.message = message
         self.status = status
         self.file = file
         self.user_id = user_id
+        self.date = date
 
     def serialize(self):
         return dict(

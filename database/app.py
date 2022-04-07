@@ -28,7 +28,7 @@ class Message(db.Model):
     __tablename__ = 'Messages'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    message = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
+    message = db.Column(db.TEXT(collation="utf8mb4_unicode_ci"))
     status = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
     file = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
     user_id = db.Column(db.Integer(), db.ForeignKey("Users.id"), nullable=False)

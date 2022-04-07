@@ -1,3 +1,4 @@
+import datetime
 from database.models import Message, User, session
 from sqlalchemy import select
 
@@ -33,7 +34,7 @@ class UserService:
         session.commit()
 
     def new_message(message, user_id, status = None):
-        msg = Message(message=message, user_id=user_id, status=status)
+        msg = Message(message=message, user_id=user_id, status=status, date=datetime.datetime.now())
         session.add(msg)
         session.commit()
 
