@@ -53,10 +53,14 @@ class UserService:
     def update_status(status, id):
         stmt = select(User).where(User.id == id)
         user = session.execute(stmt).scalars().one_or_none()
-        user.status = status
-        session.add(user)
-        session.commit()
-        return user.serialize()
+        if user:
+            user.status = status
+            session.add(user)
+            session.commit()
+            return user.serialize()
+        else:
+            return dict(error="User is not defined")
+        
 
     
     def delete_socket(socket):
@@ -66,6 +70,8 @@ class UserService:
             user.socket = None
             session.add(user)
             session.commit()
+        else:
+            return dict(error="User is not defined")
 
     def get_by_id(id):
         return User.get_by_id(id)
