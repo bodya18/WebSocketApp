@@ -33,10 +33,13 @@ def get_all():
     users = UserService.getAll()
     page = int(request.args['page']) if 'page' in request.args else 1
     limit = int(request.args['limit']) if 'limit' in request.args else 100
-
+    length = len(users)
     users = users[page*limit-limit:page*limit]
-    return json.dumps([user.serialize() for user in users])
-
+    users = dict(
+        users=[user.serialize() for user in users],
+        length=length
+    )
+    return users
 
 @api_bp.route('/users/all/status', methods=['GET'])
 @auth_required("BEARER")
@@ -47,9 +50,13 @@ def get_by_status():
             users = UserService.getStatus(status)
             page = int(request.args['page']) if 'page' in request.args else 1
             limit = int(request.args['limit']) if 'limit' in request.args else 100
+            length = len(users)
             users = users[page*limit-limit:page*limit]
-
-            return json.dumps([user.serialize() for user in users])
+            users = dict(
+                users=[user.serialize() for user in users],
+                length=length
+            )
+            return users
         else:
             return dict(error="Status not valid")
     except:
