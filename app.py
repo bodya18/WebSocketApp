@@ -26,12 +26,15 @@ def index_page():
 @socket.on('user_message')
 def user_message(msg_text):
     try:
-        UserService.update_status('Actived', msg_text["user_id"])
-        messages = UserService.get_messages_by_userId(user_id=msg_text["user_id"])
-        UserService.new_message(message=msg_text["message"], user_id=msg_text["user_id"])
+        user = UserService.update_status('Actived', msg_text["user_id"])
+        if user:
+            messages = UserService.get_messages_by_userId(user_id=msg_text["user_id"])
+            UserService.new_message(message=msg_text["message"], user_id=msg_text["user_id"])
 
-        msg_text["new_chat"] = True if messages == [] else False
-        socket.emit('admin_response', msg_text)
+            msg_text["new_chat"] = True if messages == [] else False
+            socket.emit('admin_response', msg_text)
+        else:
+            socket.emit('user_response', dict(error="User is not defined"))
     except:
         socket.emit('user_response', dict(error="invalid json format, need user_id and message"))
 
@@ -40,11 +43,14 @@ def user_message(msg_text):
 def admin_send_message(msg_text):
     try:
         user = UserService.get_by_id(msg_text["user_id"])
-        if user["socket"] is not None:
-            socket.emit('user_response', msg_text, room=user["socket"])
+        if user:
+            if user["socket"] is not None:
+                socket.emit('user_response', msg_text, room=user["socket"])
+            else:
+                print("User is offline")
+            UserService.new_message(message=msg_text["message"], user_id=msg_text["user_id"], status = "Admin")
         else:
-            print("User is offline")
-        UserService.new_message(message=msg_text["message"], user_id=msg_text["user_id"], status = "Admin")
+            socket.emit('admin_response', dict(error="User is not defined"))
     except:
         socket.emit('admin_response', dict(error="invalid json format, need user_id and message"))
 

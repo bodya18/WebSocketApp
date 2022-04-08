@@ -60,7 +60,7 @@ class UserService:
             session.commit()
             return user.serialize()
         else:
-            return dict(error="User is not defined")
+            return None
         
 
     
