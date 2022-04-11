@@ -1,5 +1,5 @@
 from Auth import auth_required
-from middleware.config import STATUS_LIST
+from middleware.config import STATUS_LIST, log
 from services.UserService import UserService
 from flask import Blueprint, request
 import json
@@ -10,6 +10,7 @@ api_bp = Blueprint('api', __name__, template_folder='templates')
 @api_bp.route('/users/add', methods=['POST'])
 def add_user():
     try:
+        log.info(request.args)
         if len(request.args['name'])<2 or len(request.args['name'])>15:
             return {"error": "length name need min 2 and max 15"}
         user_name = request.args['name']
@@ -23,13 +24,14 @@ def add_user():
         else: 
             return dict(error="invalid name")
     except Exception as e:
-        print(e)
+        log.error(e)
         return dict(error="need in params name and email")
 
 # пагинацию
 @api_bp.route('/users/all', methods=['GET'])
 @auth_required("BEARER")
 def get_all():
+    log.info(request.args)
     users = UserService.getAll()
     page = int(request.args['page']) if 'page' in request.args else 1
     limit = int(request.args['limit']) if 'limit' in request.args else 100
@@ -45,6 +47,7 @@ def get_all():
 @auth_required("BEARER")
 def get_by_status():
     try:
+        log.info(request.args)
         status = request.args['status']
         if status in STATUS_LIST:
             users = UserService.getStatus(status)
@@ -59,7 +62,8 @@ def get_by_status():
             return users
         else:
             return dict(error="Status not valid")
-    except:
+    except Exception as e:
+        log.error(e)
         return dict(error="need in params status")
 
 
@@ -67,10 +71,12 @@ def get_by_status():
 @auth_required("BEARER")
 def get_all_msg():
     try:
+        log.info(request.args)
         user_id = request.args['user_id']
         messages = UserService.get_messages_by_userId(user_id)
         return json.dumps([msg.serialize() for msg in messages])
-    except:
+    except Exception as e:
+        log.error(e)
         return dict(error="need in params user_id")
 
 
@@ -78,9 +84,11 @@ def get_all_msg():
 @auth_required("BEARER")
 def update_status():
     try:
+        log.info(request.args)
         status = request.args['status']
         id = request.args['id']
         user = UserService.update_status(status, id)
         return user
-    except:
+    except Exception as e:
+        log.error(e)
         return dict(error="need in params status, id")
