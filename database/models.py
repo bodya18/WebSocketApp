@@ -1,11 +1,11 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, create_engine, select, DateTime, Text
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from middleware.config import mysql_conf
 import datetime
 
-engine = create_engine(mysql_conf, convert_unicode=True, echo=False)
-session = Session(engine)
+engine = create_engine(mysql_conf, convert_unicode=True, echo=False, pool_recycle=3600)
+session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 Base = declarative_base()
 
 
