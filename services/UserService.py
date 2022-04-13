@@ -48,16 +48,17 @@ class UserService:
         try:
             connection = session.connection()
             stmt = select(User).where(User.id == id)
-            user = session.execute(stmt).scalars().one()
+            user = session.execute(stmt).scalars().one_or_none()
+            log.info(f"user: {user}")
+            if user:
+                user.socket = socket
+                session.add(user)
+                session.commit()
         except Exception as e:
             log.error(f"update_socket_error: {e}")
         finally:
             connection.close()
-        log.info(f"user: {user}")
-        if user:
-            user.socket = socket
-            session.add(user)
-            session.commit()
+        
 
     def update_status(status, id):
         stmt = select(User).where(User.id == id)
