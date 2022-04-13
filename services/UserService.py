@@ -1,7 +1,7 @@
 import datetime
 from database.models import Message, User, session
 from sqlalchemy import select
-
+from middleware.config import log
 
 class UserService:
 
@@ -44,9 +44,11 @@ class UserService:
         return result
 
     def update_socket(socket, id):
+        log.info(f"update_socket: {socket}, user: {id}")
         stmt = select(User).where(User.id == id)
         user = session.execute(stmt).scalars().one_or_none()
         if user:
+            log.info(f"user: {user}")
             user.socket = socket
             session.add(user)
             session.commit()

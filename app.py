@@ -20,7 +20,7 @@ app.register_blueprint(admin_bp, url_prefix='/admin')
 
 @app.get('/')
 def index_page():
-    return render_template("index.html")
+    return "KEW"
 
 @socket.on('user_message')
 def user_message(msg_text):
@@ -62,6 +62,7 @@ def admin_send_message(msg_text):
 def connected(user):
     log.info(user)
     currentSocketId = request.sid
+    log.info(f"connect: {currentSocketId}")
     UserService.update_socket(socket=currentSocketId, id=user["id"])
 
 @socket.on('disconnect')

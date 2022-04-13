@@ -27,7 +27,6 @@ def add_user():
         log.error(e)
         return dict(error="need in params name and email")
 
-# пагинацию
 @api_bp.route('/users/all', methods=['GET'])
 @auth_required("BEARER")
 def get_all():
