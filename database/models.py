@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from middleware.config import mysql_conf
 import datetime
 
-engine = create_engine(mysql_conf, convert_unicode=True, echo=False, pool_recycle=3600)
+engine = create_engine(mysql_conf, convert_unicode=True, echo=False, pool_size=20, max_overflow=0)
 session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 Base = declarative_base()
 

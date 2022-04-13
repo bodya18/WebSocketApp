@@ -70,7 +70,7 @@ def connected(user):
 
 @socket.on('disconnect')
 def disconnect():
-    log.info(request.sid)
+    log.info(f"disconnect: {request.sid}")
     currentSocketId = request.sid
     UserService.delete_socket(socket=currentSocketId)
 
