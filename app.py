@@ -63,7 +63,10 @@ def connected(user):
     log.info(user)
     currentSocketId = request.sid
     log.info(f"connect: {currentSocketId}")
-    UserService.update_socket(socket=currentSocketId, id=user["id"])
+    try:
+        UserService.update_socket(socket=currentSocketId, id=user["id"])
+    except Exception as e:
+        log.error(e)
 
 @socket.on('disconnect')
 def disconnect():

@@ -45,10 +45,13 @@ class UserService:
 
     def update_socket(socket, id):
         log.info(f"update_socket: {socket}, user: {id}")
-        stmt = select(User).where(User.id == id)
-        user = session.execute(stmt).scalars().one_or_none()
+        try:
+            stmt = select(User).where(User.id == id)
+            user = session.execute(stmt).scalars().one()
+        except Exception as e:
+            log.error(f"update_socket_error: {e}")
+        log.info(f"user: {user}")
         if user:
-            log.info(f"user: {user}")
             user.socket = socket
             session.add(user)
             session.commit()
