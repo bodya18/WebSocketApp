@@ -94,7 +94,7 @@ def update_status():
         return dict(error="need in params status, id")
 
 
-@api_bp.route('/users/file/upload', methods=['POST'])
+@api_bp.route('/file/upload', methods=['POST'])
 def file_upload():
     if 'file' not in request.files:
         log.warning("No file")
