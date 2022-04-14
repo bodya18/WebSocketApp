@@ -18,8 +18,6 @@ def get_logger(name=__file__, file=f"logs/{datetime.datetime.now().strftime('%Y-
     logging.getLogger('werkzeug').disabled = True
 
     logging.getLogger('engineio.server').disabled = True
-    # logging.getLogger('engineio.server').setLevel(logging.DEBUG)
-    # log = logging.getLogger('engineio.server')
 
     log = logging.getLogger(name)
     log.setLevel(logging.DEBUG)
