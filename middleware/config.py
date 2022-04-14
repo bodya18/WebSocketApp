@@ -11,8 +11,6 @@ ROOT_DIR = os.getcwd()
 STATUS_LIST = ["Actived", "Disabled", "Banned"]
 
 
-
-
 def get_logger(name=__file__, file=f"logs/{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M')}.log", encoding='utf-8'):
     logging.basicConfig(level=logging.DEBUG)
     logging.getLogger('werkzeug').disabled = True

@@ -1,9 +1,10 @@
+import uuid
 from Auth import auth_required
-from middleware.config import STATUS_LIST, log
+from middleware.config import ROOT_DIR, STATUS_LIST, log
 from services.UserService import UserService
 from flask import Blueprint, request
 import json
-
+import os
 
 api_bp = Blueprint('api', __name__, template_folder='templates')
 
@@ -91,3 +92,28 @@ def update_status():
     except Exception as e:
         log.error(e)
         return dict(error="need in params status, id")
+
+
+@api_bp.route('/users/file/upload', methods=['POST'])
+def file_upload():
+    if 'file' not in request.files:
+        log.warning("No file")
+        return dict(error="No file")
+    file = request.files['file']
+    if file.filename == '':
+        log.warning('NO selected file')
+        return dict(error='NO selected file')
+    try:
+        file_type = file.filename.rsplit('.', 1)[1].lower()
+    except:
+        file_type = ''
+    filename = uuid.uuid4().hex
+    first_uuid = filename[:4]
+    second_uuid = filename[4:8]
+    try:
+        os.makedirs(f"{ROOT_DIR}/files/{first_uuid}/{second_uuid}")
+    except Exception as e:
+        log.error(e)
+    finally:
+        file.save(os.path.join(f"./files/{first_uuid}/{second_uuid}", f"{filename}{'.'+file_type if file_type!='' else ''}"))
+        return f"/files/{first_uuid}/{second_uuid}/{filename}{'.'+file_type if file_type!='' else ''}"
