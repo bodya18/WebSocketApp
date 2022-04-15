@@ -2,7 +2,7 @@ import uuid
 from Auth import auth_required
 from middleware.config import ROOT_DIR, STATUS_LIST, log
 from services.UserService import UserService
-from flask import Blueprint, request
+from flask import Blueprint, request, send_file
 import json
 import os
 
@@ -108,12 +108,13 @@ def file_upload():
     except:
         file_type = ''
     filename = uuid.uuid4().hex
-    first_uuid = filename[:4]
-    second_uuid = filename[4:8]
     try:
-        os.makedirs(f"{ROOT_DIR}/files/{first_uuid}/{second_uuid}")
-    except Exception as e:
-        log.error(e)
+        os.makedirs(f"{ROOT_DIR}/files")
     finally:
-        file.save(os.path.join(f"./files/{first_uuid}/{second_uuid}", f"{filename}{'.'+file_type if file_type!='' else ''}"))
-        return f"/files/{first_uuid}/{second_uuid}/{filename}{'.'+file_type if file_type!='' else ''}"
+        file.save(os.path.join(f"./files/", f"{filename}{'.'+file_type if file_type!='' else ''}"))
+        return f"{filename}{'.'+file_type if file_type!='' else ''}"
+
+
+@api_bp.route('/file/<string:file_name>', methods=['GET'])
+def get_file(file_name):
+    return send_file(f"./files/{file_name}")

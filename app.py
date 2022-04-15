@@ -29,7 +29,7 @@ def user_message(msg_text):
         user = UserService.update_status('Actived', msg_text["user_id"])
         if user:
             messages = UserService.get_messages_by_userId(user_id=msg_text["user_id"])
-            UserService.new_message(message=msg_text["message"], user_id=msg_text["user_id"])
+            UserService.new_message(message=msg_text["message"], user_id=msg_text["user_id"], file = msg_text["file"] or None)
 
             msg_text["new_chat"] = True if messages == [] else False
             socket.emit('admin_response', msg_text)
@@ -50,7 +50,7 @@ def admin_send_message(msg_text):
                 socket.emit('user_response', msg_text, room=user["socket"])
             else:
                 log.info('=======User is offline=======')
-            UserService.new_message(message=msg_text["message"], user_id=msg_text["user_id"], status = "Admin")
+            UserService.new_message(message=msg_text["message"], user_id=msg_text["user_id"], file = msg_text["file"] or None, status = "Admin")
         else:
             socket.emit('admin_response', dict(error="User is not defined"))
     except Exception as e:

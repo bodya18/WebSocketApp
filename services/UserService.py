@@ -1,5 +1,5 @@
 import datetime
-from database.models import Message, User, session
+from database.models import Message, User, File, session
 from sqlalchemy import select
 from middleware.config import log
 
@@ -33,10 +33,15 @@ class UserService:
         session.add(user)
         session.commit()
 
-    def new_message(message, user_id, status = None):
+    def new_message(message, user_id, file, status = None):
         msg = Message(message=message, user_id=user_id, status=status, date=datetime.datetime.now())
         session.add(msg)
         session.commit()
+        if file:
+            for one_file in file:
+                added_file = File(name=one_file, message_id=msg.id)
+                session.add(added_file)
+                session.commit()
 
     def get_messages_by_userId(user_id):
         stmt = select(Message).where(Message.user_id == user_id)

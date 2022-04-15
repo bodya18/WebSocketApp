@@ -30,9 +30,17 @@ class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     message = db.Column(db.Text(collation="utf8mb4_unicode_ci"))
     status = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
-    file = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
     user_id = db.Column(db.Integer(), db.ForeignKey("Users.id"), nullable=False)
     date = db.Column(db.DateTime(), default=datetime.datetime.now())
+
+class File(db.Model):
+    __tablename__ = 'Files'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
+    status = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
+    message_id = db.Column(db.Integer(), db.ForeignKey("Messages.id"), nullable=False)
+
 
 if __name__ == '__main__':
     app.run()

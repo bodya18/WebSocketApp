@@ -62,14 +62,12 @@ class Message(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     message = Column(Text(collation="utf8mb4_unicode_ci"))
     status = Column(String(255, collation="utf8mb4_unicode_ci"))
-    file = Column(String(255, collation="utf8mb4_unicode_ci"))
     user_id = Column(Integer(), ForeignKey("Users.id"), nullable=False)
     date = Column(DateTime(), default=datetime.datetime.now())
 
-    def __init__(self, message, date = None, status = None, file = None, user_id = None):
+    def __init__(self, message, date = None, status = None, user_id = None):
         self.message = message
         self.status = status
-        self.file = file
         self.user_id = user_id
         self.date = date
 
@@ -78,9 +76,9 @@ class Message(Base):
             id = self.id,
             message = self.message,
             status = self.status,
-            file = self.file,
             user_id = self.user_id,
-            date = str(self.date)
+            date = str(self.date),
+            file = File.all_by_message(self.id)
         )
 
     def get_last_message(user_id):
@@ -89,6 +87,33 @@ class Message(Base):
         if result is None:
             return result
         return result.serialize()
+
+
+class File(Base):
+    __tablename__ = 'Files'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(255, collation="utf8mb4_unicode_ci"))
+    status = Column(String(255, collation="utf8mb4_unicode_ci"))
+    message_id = Column(Integer(), ForeignKey("Messages.id"), nullable=False)
+
+    def __init__(self, name, message_id, status = None):
+        self.name = name
+        self.status = status
+        self.message_id = message_id
+
+    def serialize(self):
+        return dict(
+            id = self.id,
+            name = self.name,
+            status = self.status,
+            message = self.message_id
+        )
+    
+    def all_by_message(message_id):
+        files = select(File).where(File.message_id == message_id)
+        result = session.execute(files).scalars().all()
+        return [file.serialize() for file in result]
 
 
 Base.metadata.create_all(bind=engine)
