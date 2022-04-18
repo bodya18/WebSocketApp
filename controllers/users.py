@@ -117,4 +117,7 @@ def file_upload():
 
 @api_bp.route('/file/<string:file_name>', methods=['GET'])
 def get_file(file_name):
-    return send_file(f"./files/{file_name}")
+    try:
+        return send_file(f"./files/{file_name}")
+    except:
+        return "file doesn't exist"
