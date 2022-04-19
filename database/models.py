@@ -19,6 +19,7 @@ class User(Base):
     email = Column(String(255, collation="utf8mb4_unicode_ci"))
     role = Column(String(255, collation="utf8mb4_unicode_ci"))
     socket = Column(String(255, collation="utf8mb4_unicode_ci"))
+    site_id = Column(Integer(), ForeignKey("Sites.id"))
 
     def __init__(self, name, password = None, role = None, status = None, email=None):
         self.name = name
@@ -114,6 +115,28 @@ class File(Base):
         files = select(File).where(File.message_id == message_id)
         result = session.execute(files).scalars().all()
         return [file.serialize() for file in result]
+
+
+class Site(Base):
+    __tablename__ = 'Sites'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(255, collation="utf8mb4_unicode_ci"))
+    status = Column(String(255, collation="utf8mb4_unicode_ci"))
+    url = Column(String(255, collation="utf8mb4_unicode_ci"))
+
+    def __init__(self, name, url, status = None):
+        self.name = name
+        self.status = status
+        self.url = url
+
+    def serialize(self):
+        return dict(
+            id = self.id,
+            name = self.name,
+            status = self.status,
+            url = self.url
+        )
 
 
 Base.metadata.create_all(bind=engine)

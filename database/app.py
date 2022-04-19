@@ -22,7 +22,7 @@ class User(db.Model):
     email = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
     role = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
     socket = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
-
+    site_id = db.Column(db.Integer(), db.ForeignKey("Sites.id"))
 
 class Message(db.Model):
     __tablename__ = 'Messages'
@@ -41,6 +41,13 @@ class File(db.Model):
     status = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
     message_id = db.Column(db.Integer(), db.ForeignKey("Messages.id"), nullable=False)
 
+class Site(db.Model):
+    __tablename__ = 'Sites'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
+    status = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
+    url = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
 
 if __name__ == '__main__':
     app.run()
