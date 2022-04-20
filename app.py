@@ -1,4 +1,5 @@
-from flask import Flask, request, render_template
+from flask import Flask, request
+from flask_restx import Api
 from flask_socketio import SocketIO
 from flask_cors import CORS
 
@@ -10,17 +11,17 @@ CORS(app)
 socket = SocketIO(app, cors_allowed_origins="*")
 
 app.config['SQLALCHEMY_DATABASE_URI'] = mysql_conf
+app.config['RESTPLUS_VALIDATE'] = True
+
 app.secret_key = 'sdafjhdsakfdsndnnvcxbi2'
 
-from controllers.users import api_bp
-from controllers.admin import admin_bp
+api = Api(app, version='mine', title='Just API', doc="/swagger")
 
-app.register_blueprint(api_bp, url_prefix='/api')
-app.register_blueprint(admin_bp, url_prefix='/admin')
+from controllers.users import ns as UserApiNs
+from controllers.admin import ns as AdminApiNs
 
-@app.get('/')
-def index_page():
-    return "KEW"
+api.add_namespace(UserApiNs)
+api.add_namespace(AdminApiNs)
 
 @socket.on('user_message')
 def user_message(msg_text):
