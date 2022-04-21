@@ -39,6 +39,8 @@ class Add_User(Resource):
             if user is None:
                 user = UserService.addUser(user_name, user_email, role="User")
                 return user
+            elif user.status == "Banned":
+                return dict(error="User banned")
             elif user.name == user_name:
                 return user.serialize()
             else: 
@@ -131,8 +133,11 @@ class UpdateUserStatus(Resource):
             log.info(request.args)
             status = request.args['status']
             id = request.args['id']
-            user = UserService.update_status(status, id)
-            return user
+            if status in STATUS_LIST:
+                user = UserService.update_status(status, id)
+                return user
+            else:
+                return dict(error="Status not valid")
         except Exception as e:
             log.error(e)
             return dict(error="need in params status, id")

@@ -27,6 +27,9 @@ api.add_namespace(AdminApiNs)
 def user_message(msg_text):
     try:
         log.info(msg_text)
+        current_user = UserService.get_by_id(msg_text["user_id"])
+        if current_user is not None and current_user.status == "Banned":
+            return socket.emit('user_response', dict(error="User banned"))
         user = UserService.update_status('Actived', msg_text["user_id"])
         if user:
             messages = UserService.get_messages_by_userId(user_id=msg_text["user_id"])
