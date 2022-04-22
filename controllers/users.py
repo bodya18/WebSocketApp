@@ -1,3 +1,4 @@
+import datetime
 import uuid
 from Auth import auth_required
 from middleware.config import ROOT_DIR, STATUS_LIST, log
@@ -64,9 +65,17 @@ class Get_All(Resource):
         page = int(request.args['page']) if 'page' in request.args else 1
         limit = int(request.args['limit']) if 'limit' in request.args else 100
         length = len(users)
+        users=[user.serialize() for user in users]
+        for i, user in enumerate(users):
+            user["last_message"]["date"] = datetime.datetime.strptime(user["last_message"]["date"], '%Y-%m-%d %H:%M:%S')
+            users[i] = user
+        users = sorted(users, key=lambda d: d["last_message"]["date"]) 
+        for i, user in enumerate(users):
+            user["last_message"]["date"] = str(user["last_message"]["date"])
+            users[i] = user
         users = users[page*limit-limit:page*limit]
         users = dict(
-            users=[user.serialize() for user in users],
+            users=users,
             length=length
         )
         return users
@@ -88,10 +97,18 @@ class GetByStatus(Resource):
                 users = UserService.getStatus(status)
                 page = int(request.args['page']) if 'page' in request.args else 1
                 limit = int(request.args['limit']) if 'limit' in request.args else 100
+                users=[user.serialize() for user in users]
+                for i, user in enumerate(users):
+                    user["last_message"]["date"] = datetime.datetime.strptime(user["last_message"]["date"], '%Y-%m-%d %H:%M:%S')
+                    users[i] = user
+                users = sorted(users, key=lambda d: d["last_message"]["date"]) 
+                for i, user in enumerate(users):
+                    user["last_message"]["date"] = str(user["last_message"]["date"])
+                    users[i] = user
                 length = len(users)
                 users = users[page*limit-limit:page*limit]
                 users = dict(
-                    users=[user.serialize() for user in users],
+                    users=users,
                     length=length
                 )
                 return users
