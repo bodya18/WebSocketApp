@@ -43,18 +43,26 @@ class User(Base):
         )
     
     def get_by_id(id):
-        stmt = select(User).where(User.id == id)
-        result = session.execute(stmt).scalars().one_or_none()
-        return result.serialize()
+        connection = session.connection()
+        try:
+            stmt = select(User).where(User.id == id)
+            result = session.execute(stmt).scalars().one_or_none()
+            return result.serialize()
+        finally:
+            connection.close()
+
     
     def drop_all_sockets():
-        sclrs = select(User)
-        users = session.execute(sclrs).scalars().all()
-        for user in users:
-            user.socket = None
-            session.add(user)
-            session.commit()
-
+        connection = session.connection()
+        try:
+            sclrs = select(User)
+            users = session.execute(sclrs).scalars().all()
+            for user in users:
+                user.socket = None
+                session.add(user)
+                session.commit()
+        finally:
+            connection.close()
 
 
 class Message(Base):
@@ -83,11 +91,15 @@ class Message(Base):
         )
 
     def get_last_message(user_id):
-        stmt = select(Message).where(Message.user_id == user_id).order_by(Message.id.desc()).limit(1)
-        result = session.execute(stmt).scalars().one_or_none()
-        if result is None:
-            return result
-        return result.serialize()
+        connection = session.connection()
+        try:
+            stmt = select(Message).where(Message.user_id == user_id).order_by(Message.id.desc()).limit(1)
+            result = session.execute(stmt).scalars().one_or_none()
+            if result is None:
+                return result
+            return result.serialize()
+        finally:
+            connection.close()
 
 
 class File(Base):
@@ -112,9 +124,13 @@ class File(Base):
         )
     
     def all_by_message(message_id):
-        files = select(File).where(File.message_id == message_id)
-        result = session.execute(files).scalars().all()
-        return [file.serialize() for file in result]
+        connection = session.connection()
+        try:
+            files = select(File).where(File.message_id == message_id)
+            result = session.execute(files).scalars().all()
+            return [file.serialize() for file in result]
+        finally:
+            connection.close()
 
 
 class Site(Base):
