@@ -66,13 +66,7 @@ class Get_All(Resource):
         limit = int(request.args['limit']) if 'limit' in request.args else 100
         length = len(users)
         users=[user.serialize() for user in users]
-        for i, user in enumerate(users):
-            user["last_message"]["date"] = datetime.datetime.strptime(user["last_message"]["date"], '%Y-%m-%d %H:%M:%S')
-            users[i] = user
-        users = sorted(users, key=lambda d: d["last_message"]["date"]) 
-        for i, user in enumerate(users):
-            user["last_message"]["date"] = str(user["last_message"]["date"])
-            users[i] = user
+        users = sorted(users, key=lambda d: d["last_message"]["date"], reverse=True) 
         users = users[page*limit-limit:page*limit]
         users = dict(
             users=users,
@@ -84,8 +78,8 @@ class Get_All(Resource):
 @ns.doc(security=["BearerAuth"])
 class GetByStatus(Resource):
     @ns.doc(params={
-        'page': {'in': 'query', 'description': 'Current page', 'type': int, 'required': False},
-        'limit': {'in': 'query', 'description': 'Limit users in page', 'type': int, 'required': False},
+        # 'page': {'in': 'query', 'description': 'Current page', 'type': int, 'required': False},
+        # 'limit': {'in': 'query', 'description': 'Limit users in page', 'type': int, 'required': False},
         'status': {'in': 'query', 'description': 'User status', 'type': str, 'required': True},
     })
     @auth_required("BEARER")
@@ -95,18 +89,12 @@ class GetByStatus(Resource):
             status = request.args['status']
             if status in STATUS_LIST:
                 users = UserService.getStatus(status)
-                page = int(request.args['page']) if 'page' in request.args else 1
-                limit = int(request.args['limit']) if 'limit' in request.args else 100
+                # page = int(request.args['page']) if 'page' in request.args else 1
+                # limit = int(request.args['limit']) if 'limit' in request.args else 100
                 users=[user.serialize() for user in users]
-                for i, user in enumerate(users):
-                    user["last_message"]["date"] = datetime.datetime.strptime(user["last_message"]["date"], '%Y-%m-%d %H:%M:%S')
-                    users[i] = user
-                users = sorted(users, key=lambda d: d["last_message"]["date"]) 
-                for i, user in enumerate(users):
-                    user["last_message"]["date"] = str(user["last_message"]["date"])
-                    users[i] = user
+                users = sorted(users, key=lambda d: d["last_message"]["date"], reverse=True)
                 length = len(users)
-                users = users[page*limit-limit:page*limit]
+                # users = users[page*limit-limit:page*limit]
                 users = dict(
                     users=users,
                     length=length
