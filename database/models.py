@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from middleware.config import mysql_conf
 import datetime
 
-engine = create_engine(mysql_conf, convert_unicode=True, echo=False, pool_size=20, max_overflow=0)
+engine = create_engine(mysql_conf, convert_unicode=True, echo=False, pool_size=30, max_overflow=0, pool_recycle=60 * 60, pool_pre_ping= True)
 session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 Base = declarative_base()
 
@@ -43,26 +43,18 @@ class User(Base):
         )
     
     def get_by_id(id):
-        connection = session.connection()
-        try:
-            stmt = select(User).where(User.id == id)
-            result = session.execute(stmt).scalars().one_or_none()
-            return result.serialize()
-        finally:
-            connection.close()
-
+        stmt = select(User).where(User.id == id)
+        result = session.execute(stmt).scalars().one_or_none()
+        return result.serialize()
     
     def drop_all_sockets():
-        connection = session.connection()
-        try:
-            sclrs = select(User)
-            users = session.execute(sclrs).scalars().all()
-            for user in users:
-                user.socket = None
-                session.add(user)
-                session.commit()
-        finally:
-            connection.close()
+        sclrs = select(User)
+        users = session.execute(sclrs).scalars().all()
+        for user in users:
+            user.socket = None
+            session.add(user)
+            session.commit()
+
 
 
 class Message(Base):
@@ -91,15 +83,11 @@ class Message(Base):
         )
 
     def get_last_message(user_id):
-        connection = session.connection()
-        try:
-            stmt = select(Message).where(Message.user_id == user_id).order_by(Message.id.desc()).limit(1)
-            result = session.execute(stmt).scalars().one_or_none()
-            if result is None:
-                return result
-            return result.serialize()
-        finally:
-            connection.close()
+        stmt = select(Message).where(Message.user_id == user_id).order_by(Message.id.desc()).limit(1)
+        result = session.execute(stmt).scalars().one_or_none()
+        if result is None:
+            return result
+        return result.serialize()
 
 
 class File(Base):
@@ -124,13 +112,9 @@ class File(Base):
         )
     
     def all_by_message(message_id):
-        connection = session.connection()
-        try:
-            files = select(File).where(File.message_id == message_id)
-            result = session.execute(files).scalars().all()
-            return [file.serialize() for file in result]
-        finally:
-            connection.close()
+        files = select(File).where(File.message_id == message_id)
+        result = session.execute(files).scalars().all()
+        return [file.serialize() for file in result]
 
 
 class Site(Base):
