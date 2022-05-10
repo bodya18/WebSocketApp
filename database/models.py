@@ -1,3 +1,4 @@
+from enum import unique
 from sqlalchemy import Column, Integer, String, ForeignKey, create_engine, select, DateTime, Text
 from sqlalchemy.orm import Session, scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -39,6 +40,7 @@ class User(Base):
             email = self.email,
             role = self.role,
             socket = self.socket,
+            site_id = Site.get_by_id(self.site_id),
             last_message = Message.get_last_message(self.id),
         )
     
@@ -130,6 +132,11 @@ class Site(Base):
         self.status = status
         self.url = url
 
+    def get_by_id(id):
+        stmt = select(Site).where(Site.id == id)
+        site = session.execute(stmt).scalars().one_or_none()
+        return site.serialize() if site else site
+
     def serialize(self):
         return dict(
             id = self.id,
@@ -138,6 +145,52 @@ class Site(Base):
             url = self.url
         )
 
+
+class Setting(Base):
+    __tablename__ = 'Settings'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(255, collation="utf8mb4_unicode_ci"), unique=True)
+
+    def __init__(self, name):
+        self.name = name
+    
+    def get_by_id(id):
+        stmt = select(Setting).where(Setting.id == id)
+        result = session.execute(stmt).scalars().one_or_none()
+        return result.serialize()
+
+    def serialize(self):
+        return dict(
+            id = self.id,
+            name = self.name
+        )
+
+class Site_Setting(Base):
+    __tablename__ = 'SiteSettings'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    site_id = Column(Integer(), ForeignKey("Sites.id"))
+    setting_id = Column(Integer(), ForeignKey("Settings.id"))
+    value = Column(String(255, collation="utf8mb4_unicode_ci"))
+
+    def __init__(self, site_id, setting_id,  value= None):
+        self.site_id = site_id
+        self.setting_id = setting_id
+        self.value = value
+
+    def get_by_id(id):
+        stmt = select(Site_Setting).where(Site_Setting.id == id)
+        result = session.execute(stmt).scalars().one_or_none()
+        return result.serialize()
+
+    def serialize(self):
+        return dict(
+            id = self.id,
+            site_id = Site.get_by_id(self.site_id),
+            setting_id = Setting.get_by_id(self.setting_id),
+            value = self.value,
+        )
 
 Base.metadata.create_all(bind=engine)
 

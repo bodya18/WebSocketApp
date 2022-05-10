@@ -49,5 +49,22 @@ class Site(db.Model):
     status = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
     url = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
 
+class Setting(db.Model):
+    __tablename__ = 'Settings'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
+    status = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
+
+
+class Site_Setting(db.Model):
+    __tablename__ = 'SiteSettings'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    site_id = db.Column(db.Integer(), db.ForeignKey("Sites.id"))
+    setting_id = db.Column(db.Integer(), db.ForeignKey("Settings.id"))
+    value = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
+
+
 if __name__ == '__main__':
     app.run()

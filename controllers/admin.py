@@ -5,7 +5,7 @@ import bcrypt
 from flask_restx import Resource, Namespace
 
 ns = Namespace(
-    'Admin api', 
+    'Admin', 
     path="/admin",
     description='Api admin operations'
 )

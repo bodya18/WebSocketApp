@@ -8,7 +8,7 @@ import os
 from flask_restx import Resource, Namespace
 
 ns = Namespace(
-    'User api', 
+    'User', 
     path="/api",
     description='Api user operations',
     authorizations={

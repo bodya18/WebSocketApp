@@ -15,13 +15,17 @@ app.config['RESTPLUS_VALIDATE'] = True
 
 app.secret_key = 'sdafjhdsakfdsndnnvcxbi2'
 
-api = Api(app, version='mine', title='Just API', doc="/swagger")
+api = Api(app, version='minecraft', title='Just API', doc="/swagger")
 
 from controllers.users import ns as UserApiNs
 from controllers.admin import ns as AdminApiNs
+from controllers.site import ns as SiteApiNs
+from controllers.setting import ns as SettingApiNs
 
 api.add_namespace(UserApiNs)
 api.add_namespace(AdminApiNs)
+api.add_namespace(SiteApiNs)
+api.add_namespace(SettingApiNs)
 
 @socket.on('user_message')
 def user_message(msg_text):
