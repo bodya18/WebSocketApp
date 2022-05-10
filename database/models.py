@@ -170,8 +170,8 @@ class Site_Setting(Base):
     __tablename__ = 'SiteSettings'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    site_id = Column(Integer(), ForeignKey("Sites.id"))
-    setting_id = Column(Integer(), ForeignKey("Settings.id"))
+    site_id = Column(Integer(), ForeignKey("Sites.id", ondelete="CASCADE"))
+    setting_id = Column(Integer(), ForeignKey("Settings.id", ondelete="CASCADE"))
     value = Column(String(255, collation="utf8mb4_unicode_ci"))
 
     def __init__(self, site_id, setting_id,  value= None):

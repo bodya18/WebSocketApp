@@ -61,8 +61,8 @@ class Site_Setting(db.Model):
     __tablename__ = 'SiteSettings'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    site_id = db.Column(db.Integer(), db.ForeignKey("Sites.id"))
-    setting_id = db.Column(db.Integer(), db.ForeignKey("Settings.id"))
+    site_id = db.Column(db.Integer(), db.ForeignKey("Sites.id", ondelete="CASCADE"))
+    setting_id = db.Column(db.Integer(), db.ForeignKey("Settings.id", ondelete="CASCADE"))
     value = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
 
 

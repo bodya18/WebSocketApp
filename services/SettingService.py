@@ -24,10 +24,19 @@ class SettingService:
         return setting.serialize()
 
     def add_value(value, site_id, setting_id):
-        setting = Site_Setting(value=value, site_id=site_id, setting_id=setting_id)
-        session.add(setting)
-        session.commit()
-        return setting.serialize()
+        sett = session.execute(select(Site_Setting)
+        .where(Site_Setting.setting_id == setting_id)
+        .where(Site_Setting.site_id == site_id)).scalars().one_or_none()
+        if sett:
+            sett.value = value
+            session.add(sett)
+            session.commit()
+            return sett.serialize()
+        else:
+            setting = Site_Setting(value=value, site_id=site_id, setting_id=setting_id)
+            session.add(setting)
+            session.commit()
+            return setting.serialize()
 
     def delete_setting(id):
         try:
