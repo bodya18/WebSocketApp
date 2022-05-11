@@ -38,12 +38,13 @@ class Setting_Base(Resource):
     @ns.doc(security=["BearerAuth"])
     @ns.doc(params={
         'name': {'in': 'query', 'description': 'Setting name ', 'type': str, 'required': True},
+        'base_value': {'in': 'query', 'description': 'base value setting ', 'type': str, 'required': False},
     })
     @auth_required("BEARER")
     def post(self):
         try:
             if 'name' in request.args:
-                return SettingService.addSetting(name=request.args['name'])
+                return SettingService.addSetting(name = request.args['name'], base_value = request.args['base_value'] if request.args['base_value'] else None)
             else:
                 return dict(error="need name")
         except Exception as e:
@@ -61,6 +62,23 @@ class Setting_Base(Resource):
                 return SettingService.delete_setting(id=request.args['id'])
             else:
                 return dict(error="need id")
+        except Exception as e:
+            log.error(e)
+            return dict(error=e) 
+
+
+    @ns.doc(security=["BearerAuth"])
+    @ns.doc(params={
+        'name': {'in': 'query', 'description': 'Setting name ', 'type': str, 'required': True},
+        'base_value': {'in': 'query', 'description': 'base value setting ', 'type': str, 'required': True},
+    })
+    @auth_required("BEARER")
+    def put(self):
+        try:
+            if 'name' in request.args and 'base_value' in request.args:
+                return SettingService.update_setting(name=request.args['name'], base_value = request.args['base_value'])
+            else:
+                return dict(error="need name and base_value")
         except Exception as e:
             log.error(e)
             return dict(error=e) 

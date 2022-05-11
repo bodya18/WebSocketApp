@@ -54,7 +54,7 @@ class Setting(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
-    status = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
+    base_value = db.Column(db.String(255, collation="utf8mb4_unicode_ci"))
 
 
 class Site_Setting(db.Model):

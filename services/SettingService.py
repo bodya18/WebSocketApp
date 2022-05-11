@@ -4,8 +4,8 @@ from middleware.config import log
 
 class SettingService:
 
-    def addSetting(name):
-        setting = Setting(name=name)
+    def addSetting(name, base_value):
+        setting = Setting(name=name, base_value=base_value)
         session.add(setting)
         session.commit()
         return setting.serialize()
@@ -38,6 +38,18 @@ class SettingService:
             session.commit()
             return setting.serialize()
 
+    def update_setting(name, base_value):
+        setting = session.execute(
+            select(Setting)
+            .where(Setting.name == name)
+        ).scalars().one_or_none()
+        setting.base_value = base_value
+        session.add(setting)
+        session.commit()
+        return setting.serialize()
+
+
+    
     def delete_setting(id):
         try:
             site = session.execute(select(Setting).where(Setting.id == id)).scalars().one_or_none()

@@ -151,9 +151,11 @@ class Setting(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255, collation="utf8mb4_unicode_ci"), unique=True)
+    base_value = Column(String(255, collation="utf8mb4_unicode_ci"))
 
-    def __init__(self, name):
+    def __init__(self, name, base_value=None):
         self.name = name
+        self.base_value = base_value
     
     def get_by_id(id):
         stmt = select(Setting).where(Setting.id == id)
@@ -163,7 +165,8 @@ class Setting(Base):
     def serialize(self):
         return dict(
             id = self.id,
-            name = self.name
+            name = self.name,
+            base_value = self.base_value,
         )
 
 class Site_Setting(Base):
